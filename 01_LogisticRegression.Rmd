@@ -1,0 +1,46 @@
+---
+title: "Logistic regression - create model"
+author: "kcrt"
+date: "2022-11-04"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+Sys.setlocale("LC_ALL",'en_US')
+Sys.setenv(LANGUAGE="en")
+```
+
+## Import required libraries
+```{r lib}
+require("tidyverse")
+require("gtsummary")
+```
+
+## Load file
+```{r load}
+d <- readxl::read_excel("./01_LogisticRegressionSample.xlsx", sheet="Data")
+```
+
+## Data summary
+
+```{r summary}
+d |>
+  gtsummary::tbl_summary(by = "Result") |>
+  add_p()
+```
+
+
+## Perform logistic regression and save model
+```{r logistic regression}
+# Logistic regression
+model = glm(formula = Result ~ Age + log10(IgE) + log10(EWsIgE) + log10(OVMsIgE) + BA + AD + AR,
+            family = binomial,
+            data = d)
+model |> tbl_regression(exp=T)
+
+# Save to file
+saveRDS(d, file="01_LogisticRegressionData.rds")
+saveRDS(model, file="01_LogisticRegressionModel.rds")
+
+```
